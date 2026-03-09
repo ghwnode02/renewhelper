@@ -302,7 +302,7 @@ const calendarEvents = computed(() => {
         // 1. 历史记录回溯
         const history = item.renewHistory || [];
         history.forEach(r => {
-            if (r.startDate) addEvent(r.startDate, item, false);
+            if (r.endDate && r.endDate !== item.nextDueDate) addEvent(r.endDate, item, false);
         });
         // 2. 当前 nextDueDate
         if (item.nextDueDate) {
@@ -3031,8 +3031,10 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 column-key="serviceDays" :filters="uptimeFilters">
                                 <template #default="scope">
                                     <span
-                                        class="inline-block bg-body text-textDim border border-border px-2 py-1 font-mono text-sm font-bold">{{
-                                            scope.row.serviceDays }} {{ t('daysUnit') }}</span>
+                                        class="inline-block bg-body text-textDim border border-border px-1 py-1 font-mono text-sm font-bold">{{
+                                            scope.row.serviceDays >= 365
+                                                ? Math.floor(scope.row.serviceDays / 365) + t('unit.year') + (scope.row.serviceDays % 365 > 0 ? (scope.row.serviceDays % 365) + t('daysUnit') : '')
+                                                : scope.row.serviceDays + t('daysUnit') }}</span>
                                 </template>
                             </el-table-column>
 
